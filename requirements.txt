@@ -1,0 +1,12 @@
+numpy
+pyyaml
+sklearn
+matplotlib
+prefetch_generator
+wandb
+torch
+torchvision
+tensorboard
+hydra-core
+hydra_colorlog 
+omegaconf
