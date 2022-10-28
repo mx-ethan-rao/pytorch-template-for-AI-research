@@ -10,3 +10,4 @@ tensorboard
 hydra-core
 hydra_colorlog 
 omegaconf
+tqdm

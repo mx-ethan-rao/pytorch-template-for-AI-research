@@ -1,4 +1,5 @@
 import os
+import copy
 
 import torch
 
@@ -6,6 +7,9 @@ from utils.utils import get_logger, is_logging_process
 
 
 def test_model(cfg, model, test_loader, writer):
+    if 'console' in cfg.job_logging_cfg.root.handlers:
+        cfg = copy.deepcopy(cfg)
+        cfg.job_logging_cfg.root.handlers.remove('console')
     logger = get_logger(cfg, os.path.basename(__file__))
     model.net.eval()
     total_test_loss = 0

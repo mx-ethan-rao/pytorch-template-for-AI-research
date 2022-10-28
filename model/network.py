@@ -3,10 +3,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class Net_arch(nn.Module):
+class Network(nn.Module):
     # Network architecture
     def __init__(self, cfg):
-        super(Net_arch, self).__init__()
+        super(Network, self).__init__()
         self.cfg = cfg
 
         # TODO: This is example code. You should change this part as you need

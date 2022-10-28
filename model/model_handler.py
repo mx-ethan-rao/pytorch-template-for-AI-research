@@ -11,7 +11,7 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from utils.utils import get_logger, is_logging_process
 
 
-class Model:
+class Model_handler:
     def __init__(self, cfg, net_arch, loss_f, rank=0):
         self.cfg = cfg
         self.device = self.cfg.device

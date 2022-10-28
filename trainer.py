@@ -11,12 +11,13 @@ import torch.distributed as dist
 import torch.multiprocessing as mp
 import torchvision
 import yaml
+from tqdm import tqdm
 from hydra.core.hydra_config import HydraConfig
 from omegaconf import OmegaConf, open_dict
 
-from dataset.dataloader import DataloaderMode, create_dataloader
-from model.model import Model
-from model.model_arch import Net_arch
+from dataloader.dataloader import DataloaderMode, create_dataloader
+from model.model_handler import Model_handler
+from model.network import Network
 from utils.test_model import test_model
 from utils.train_model import train_model
 from utils.utils import get_logger, is_logging_process, set_random_seed
@@ -99,9 +100,9 @@ def train_loop(rank, cfg):
     test_loader = create_dataloader(cfg, DataloaderMode.test, rank)
 
     # init Model
-    net_arch = Net_arch(cfg)
+    net_arch = Network(cfg)
     loss_f = torch.nn.CrossEntropyLoss()
-    model = Model(cfg, net_arch, loss_f, rank)
+    model = Model_handler(cfg, net_arch, loss_f, rank)
 
     # load training state / network checkpoint
     if cfg.load.resume_state_path is not None:
@@ -117,9 +118,8 @@ def train_loop(rank, cfg):
             epoch_step = 1
         else:
             epoch_step = cfg.dist.gpus
-        for model.epoch in itertools.count(model.epoch + 1, epoch_step):
-            if model.epoch > cfg.num_epoch:
-                break
+        for epoch in tqdm(range(model.epoch + 1, cfg.train.num_epoch, epoch_step), desc="Epoch"):
+            model.epoch = epoch
             train_model(cfg, model, train_loader, writer)
             if model.epoch % cfg.log.chkpt_interval == 0:
                 model.save_network()

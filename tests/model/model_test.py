@@ -4,8 +4,8 @@ import pytest
 import torch
 import torch.nn as nn
 
-from model.model import Model
-from model.model_arch import Net_arch
+from model.model_handler import Model_handler
+from model.network import Network
 from tests.test_case import ProjectTestCase
 
 
@@ -17,9 +17,9 @@ class TestModel(ProjectTestCase):
 
     def setup_method(self, method):
         super(TestModel, self).setup_method()
-        self.net = Net_arch(self.cfg)
+        self.net = Network(self.cfg)
         self.loss_f = nn.CrossEntropyLoss()
-        self.model = Model(self.cfg, self.net, self.loss_f)
+        self.model = Model_handler(self.cfg, self.net, self.loss_f)
 
     def test_model(self):
         assert self.model.cfg == self.cfg
@@ -42,9 +42,9 @@ class TestModel(ProjectTestCase):
         assert output.shape == self.model_target.shape + (10,)
 
     def test_save_load_network(self):
-        local_net = Net_arch(self.cfg)
+        local_net = Network(self.cfg)
         self.loss_f = nn.MSELoss()
-        local_model = Model(self.cfg, local_net, self.loss_f)
+        local_model = Model_handler(self.cfg, local_net, self.loss_f)
 
         self.model.save_network()
         save_filename = "%s_%d.pt" % (self.cfg.name, self.model.step)
@@ -61,9 +61,9 @@ class TestModel(ProjectTestCase):
             assert (load == origin).all()
 
     def test_save_load_state(self):
-        local_net = Net_arch(self.cfg)
+        local_net = Network(self.cfg)
         self.loss_f = nn.MSELoss()
-        local_model = Model(self.cfg, local_net, self.loss_f)
+        local_model = Model_handler(self.cfg, local_net, self.loss_f)
 
         self.model.save_training_state()
         save_filename = "%s_%d.state" % (self.cfg.name, self.model.step)

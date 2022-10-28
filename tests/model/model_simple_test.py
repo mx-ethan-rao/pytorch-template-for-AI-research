@@ -4,7 +4,7 @@ import tempfile
 import torch
 from hydra.experimental import compose, initialize
 
-from model.model_arch import Net_arch
+from model.network import Network
 
 TEST_DIR = tempfile.mkdtemp(prefix="project_tests")
 
@@ -14,7 +14,7 @@ def test_net_arch():
     with initialize(config_path="../../config"):
         cfg = compose(config_name="default", overrides=[f"working_dir={TEST_DIR}"])
 
-    net = Net_arch(cfg)
+    net = Network(cfg)
 
     # TODO: This is example code. You should change this part as you need. You can code this part as forward
     x = torch.rand(8, 1, 28, 28)

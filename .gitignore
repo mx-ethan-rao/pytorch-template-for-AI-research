@@ -1,7 +1,8 @@
 # logs, checkpoints
 chkpt/
 logs/
-dataset/meta/
+dataset/
+data/
 outputs/
 wandb/
 
@@ -432,7 +433,7 @@ dmypy.json
 .prof
 
 ### vscode ###
-.vscode/*
+.vscode
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json

@@ -1,13 +1,20 @@
 import math
 import os
+from tqdm import tqdm
+import copy
 
 from utils.utils import get_logger, is_logging_process
 
 
 def train_model(cfg, model, train_loader, writer):
+    # stop output to stdout; only output to log file
+    if 'console' in cfg.job_logging_cfg.root.handlers:
+        cfg = copy.deepcopy(cfg)
+        cfg.job_logging_cfg.root.handlers.remove('console')
     logger = get_logger(cfg, os.path.basename(__file__))
+    
     model.net.train()
-    for model_input, model_target in train_loader:
+    for model_input, model_target in tqdm(train_loader, leave = False, desc="Batch"):
         model.optimize_parameters(model_input, model_target)
         loss = model.log.loss_v
         model.step += 1
