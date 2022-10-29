@@ -27,6 +27,11 @@ def create_dataloader(cfg, mode, rank):
         data_loader = DataLoader_
     else:
         data_loader = DataLoader
+
+    ###############################################################################
+    # Remark: hydra.utils.instantiate is not for distributed Data Parallel training 
+    # Replace next line with `dataset = Dataset_(cfg, mode)`
+    ###############################################################################
     dataset = hydra.utils.instantiate(cfg.gen_dataset, cfg=cfg, mode=mode)
     # dataset = Dataset_(cfg, mode)
     train_use_shuffle = True

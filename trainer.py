@@ -56,6 +56,7 @@ def train_loop(rank, cfg):
         cfg.data.use_background_generator = False
         setup(cfg, rank)
         torch.cuda.set_device(cfg.device)
+        writer = None
 
     # setup writer
     if is_logging_process():
@@ -98,6 +99,10 @@ def train_loop(rank, cfg):
     test_loader = create_dataloader(cfg, DataloaderMode.test, rank)
 
     # init Model
+    ###############################################################################
+    # Remark: hydra.utils.instantiate is not for distributed Data Parallel training 
+    # Replace next line with `net_arch = Network(cfg)` and import Network module
+    ###############################################################################
     net_arch = hydra.utils.instantiate(cfg.model, cfg=cfg)
     # net_arch = Network(cfg)
     loss_f = torch.nn.CrossEntropyLoss()
@@ -136,7 +141,7 @@ def train_loop(rank, cfg):
             cleanup()
 
 
-@hydra.main(config_path="config", config_name="default")
+@hydra.main(version_base="1.2", config_path="config", config_name="default")
 def main(hydra_cfg):
     hydra_cfg.device = hydra_cfg.device.lower()
     with open_dict(hydra_cfg):
