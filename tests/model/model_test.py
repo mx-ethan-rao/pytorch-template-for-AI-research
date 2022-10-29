@@ -3,6 +3,7 @@ import os
 import pytest
 import torch
 import torch.nn as nn
+import hydra
 
 from model.model_handler import Model_handler
 from model.network import Network
@@ -17,7 +18,8 @@ class TestModel(ProjectTestCase):
 
     def setup_method(self, method):
         super(TestModel, self).setup_method()
-        self.net = Network(self.cfg)
+        # self.net = Network(self.cfg)
+        self.net = hydra.utils.instantiate(self.cfg.model, cfg=self.cfg)
         self.loss_f = nn.CrossEntropyLoss()
         self.model = Model_handler(self.cfg, self.net, self.loss_f)
 
@@ -42,7 +44,8 @@ class TestModel(ProjectTestCase):
         assert output.shape == self.model_target.shape + (10,)
 
     def test_save_load_network(self):
-        local_net = Network(self.cfg)
+        # local_net = Network(self.cfg)
+        local_net = hydra.utils.instantiate(self.cfg.model, cfg=self.cfg)
         self.loss_f = nn.MSELoss()
         local_model = Model_handler(self.cfg, local_net, self.loss_f)
 
@@ -61,7 +64,8 @@ class TestModel(ProjectTestCase):
             assert (load == origin).all()
 
     def test_save_load_state(self):
-        local_net = Network(self.cfg)
+        # local_net = Network(self.cfg)
+        local_net =hydra.utils.instantiate(self.cfg.model, cfg=self.cfg)
         self.loss_f = nn.MSELoss()
         local_model = Model_handler(self.cfg, local_net, self.loss_f)
 

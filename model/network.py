@@ -1,11 +1,12 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from omegaconf.dictconfig import DictConfig
 
 
 class Network(nn.Module):
     # Network architecture
-    def __init__(self, cfg):
+    def __init__(self, cfg: DictConfig) -> None:
         super(Network, self).__init__()
         self.cfg = cfg
 

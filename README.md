@@ -1,7 +1,7 @@
 <div align="center">
     <img src="assets/icon.png"/>
     <h1><code>
-        Pytorch Project Template
+        A Light Pytorch Project Template for Intensive AI Research
     </h1></code>
     <p>
         <img src="https://img.shields.io/github/license/ryul99/pytorch-project-template"/>
@@ -27,15 +27,20 @@
 
 - `assets` dir: icon image of `Pytorch Project Template`. You can remove this directory.
 - `config` dir: directory for config files
-- `dataset` dir: dataloader and dataset codes are here. Also, put dataset in `meta` dir.
+- `dataloader` dir: dataloader and dataset codes are here. Also, put dataset in `meta` dir.
 - `model` dir: `model.py` is for wrapping network architecture. `model_arch.py` is for coding network architecture.
 - `tests` dir: directory for `pytest` testing codes. You can check your network's flow of tensor by fixing `tests/model/net_arch_test.py`. 
 Just copy & paste `Net_arch.forward` method to  `net_arch_test.py` and add `assert` phrase to check tensor.
 - `utils` dir:
-    - `train_model.py` and `test_model.py` are for train and test model once.
     - `utils.py` is for utility. random seed setting, dot-access hyper parameter, get commit hash, etc are here. 
     - `writer.py` is for writing logs in tensorboard / wandb.
 - `trainer.py` file: this is for setting up and iterating epoch.
+
+## Hightlight
+- Support for multiple dataloaders and multiple models in one project
+- Simply write another model.network.Network class and dataloader.dataloader.Dataset_
+- Then add two more yaml file for new network and Dataloader separately under the config/model and config/datamodule
+- The yaml file could be quite similar to the default.yaml under under the config/model and config/datamodule 
 
 ## Setup
 
@@ -96,4 +101,6 @@ Just copy & paste `Net_arch.forward` method to  `net_arch_test.py` and add `asse
 ## Inspired by
 
 - https://github.com/open-mmlab/mmsr
+- https://github.com/ryul99/pytorch-project-template
+- https://github.com/ashleve/lightning-hydra-template
 - https://github.com/allenai/allennlp (test case writing)

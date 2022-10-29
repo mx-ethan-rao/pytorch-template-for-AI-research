@@ -1,30 +1,10 @@
 # @package _global_
+
 name: 'template'
 working_dir: ${work_dir}
 device: 'cpu'
-random_seed: 2022
-# num_epoch: 10000  # max iteration
-# data:
-#   train_dir: 'dataset/meta/train'
-#   test_dir: 'dataset/meta/test'
-#   file_format: '*.file_extension'
-#   use_background_generator: true
-#   divide_dataset_per_gpu: false
-# train:
-#   num_workers: 4
-#   batch_size: 64
-#   optimizer:
-#     mode: 'adam'
-#     adam:
-#       lr: 0.001
-#       betas:
-#         - 0.9
-#         - 0.999
-# test:
-#   num_workers: 4
-#   batch_size: 64
-# model:
-#   ~
+random_seed: 1111
+
 dist:
   master_addr: 'localhost'
   master_port: '12355'
@@ -33,7 +13,7 @@ dist:
   timeout: 30 # seconds for timeout. In nccl mode, set ~ for not using timeout
 log:
   use_tensorboard: false
-  use_wandb: true
+  use_wandb: false
   wandb_init_conf:
     name: ${name}
     entity: ethan-predator

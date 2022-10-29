@@ -1,21 +1,25 @@
 import os
 import os.path as osp
 from collections import OrderedDict
+import copy
+import math
 
 import torch
 import torch.nn
 import wandb
 from omegaconf import OmegaConf
 from torch.nn.parallel import DistributedDataParallel as DDP
+from tqdm import tqdm
 
 from utils.utils import get_logger, is_logging_process
 
 
 class Model_handler:
-    def __init__(self, cfg, net_arch, loss_f, rank=0):
+    def __init__(self, cfg, net_arch, loss_f, writer, rank=0):
         self.cfg = cfg
         self.device = self.cfg.device
         self.net = net_arch.to(self.device)
+        self.writer = writer
         self.rank = rank
         if self.device != "cpu" and self.cfg.dist.gpus != 0:
             self.net = DDP(self.net, device_ids=[self.rank])
@@ -35,6 +39,25 @@ class Model_handler:
         # init loss
         self.loss_f = loss_f
         self.log = OmegaConf.create()
+    
+    def train_model(self, train_loader):
+        logger = get_logger(self.cfg, os.path.basename(__file__), disable_console=True)
+        
+        self.net.train()
+        for model_input, model_target in tqdm(train_loader, leave = False, desc="Training/Batch:"):
+            self.optimize_parameters(model_input, model_target)
+            loss = self.log.loss_v
+            self.step += 1
+
+            if is_logging_process() and (loss > 1e8 or math.isnan(loss)):
+                logger.error("Loss exploded to %.02f at step %d!" % (loss, self.step))
+                raise Exception("Loss exploded")
+
+            if self.step % self.cfg.log.summary_interval == 0:
+                if self.writer is not None:
+                    self.writer.logging_with_step(loss, self.step, "train_loss")
+                if is_logging_process():
+                    logger.info("Train Loss %.04f at step %d" % (loss, self.step))
 
     def optimize_parameters(self, model_input, model_target):
         self.net.train()
@@ -45,6 +68,29 @@ class Model_handler:
         self.optimizer.step()
         # set log
         self.log.loss_v = loss_v.item()
+
+    def test_model(self, test_loader):
+        logger = get_logger(self.cfg, os.path.basename(__file__), disable_console=True)
+        self.net.eval()
+        total_test_loss = 0
+        test_loop_len = 0
+        with torch.no_grad():
+            for model_input, model_target in tqdm(test_loader, leave = False, desc="Testing/Batch:"):
+                output = self.inference(model_input)
+                loss_v = self.loss_f(output, model_target.to(self.cfg.device))
+                if self.cfg.dist.gpus > 0:
+                    # Aggregate loss_v from all GPUs. loss_v is set as the sum of all GPUs' loss_v.
+                    torch.distributed.all_reduce(loss_v)
+                    loss_v /= torch.tensor(float(self.cfg.dist.gpus))
+                total_test_loss += loss_v.to("cpu").item()
+                test_loop_len += 1
+
+            total_test_loss /= test_loop_len
+
+            if self.writer is not None:
+                self.writer.logging_with_step(total_test_loss, self.step, "test_loss")
+            if is_logging_process():
+                logger.info("Test Loss %.04f at step %d" % (total_test_loss, self.step))
 
     def inference(self, model_input):
         self.net.eval()

@@ -17,9 +17,7 @@ from omegaconf import OmegaConf, open_dict
 
 from dataloader.dataloader import DataloaderMode, create_dataloader
 from model.model_handler import Model_handler
-from model.network import Network
-from utils.test_model import test_model
-from utils.train_model import train_model
+# from model.network import Network
 from utils.utils import get_logger, is_logging_process, set_random_seed
 from utils.writer import Writer
 
@@ -100,9 +98,10 @@ def train_loop(rank, cfg):
     test_loader = create_dataloader(cfg, DataloaderMode.test, rank)
 
     # init Model
-    net_arch = Network(cfg)
+    net_arch = hydra.utils.instantiate(cfg.model, cfg=cfg)
+    # net_arch = Network(cfg)
     loss_f = torch.nn.CrossEntropyLoss()
-    model = Model_handler(cfg, net_arch, loss_f, rank)
+    model = Model_handler(cfg, net_arch, loss_f, writer, rank)
 
     # load training state / network checkpoint
     if cfg.load.resume_state_path is not None:
@@ -120,11 +119,11 @@ def train_loop(rank, cfg):
             epoch_step = cfg.dist.gpus
         for epoch in tqdm(range(model.epoch + 1, cfg.train.num_epoch, epoch_step), desc="Epoch"):
             model.epoch = epoch
-            train_model(cfg, model, train_loader, writer)
+            model.train_model(train_loader)
             if model.epoch % cfg.log.chkpt_interval == 0:
                 model.save_network()
                 model.save_training_state()
-            test_model(cfg, model, test_loader, writer)
+            model.test_model(test_loader)
         if is_logging_process():
             logger.info("End of Train")
     except Exception as e:

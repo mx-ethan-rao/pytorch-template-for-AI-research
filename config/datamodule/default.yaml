@@ -1,5 +1,12 @@
 # @package _global_
 
+gen_dataset:
+  _target_: dataloader.dataloader.Dataset_
+  cfg: ~
+  mode:
+    _target_: dataloader.dataloader.DataloaderMode
+    value: 1
+
 data:
   train_dir: 'dataset/meta/train'
   test_dir: 'dataset/meta/test'

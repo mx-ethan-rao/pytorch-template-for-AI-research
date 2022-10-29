@@ -27,7 +27,8 @@ def create_dataloader(cfg, mode, rank):
         data_loader = DataLoader_
     else:
         data_loader = DataLoader
-    dataset = Dataset_(cfg, mode)
+    dataset = hydra.utils.instantiate(cfg.gen_dataset, cfg=cfg, mode=mode)
+    # dataset = Dataset_(cfg, mode)
     train_use_shuffle = True
     sampler = None
     if cfg.dist.gpus > 0 and cfg.data.divide_dataset_per_gpu:
