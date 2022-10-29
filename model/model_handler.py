@@ -44,7 +44,7 @@ class Model_handler:
         logger = get_logger(self.cfg, os.path.basename(__file__), disable_console=True)
         
         self.net.train()
-        for model_input, model_target in tqdm(train_loader, leave = False, desc="Training/Batch:"):
+        for model_input, model_target in tqdm(train_loader, leave = False, desc="Training/Batch:", unit='batch'):
             self.optimize_parameters(model_input, model_target)
             loss = self.log.loss_v
             self.step += 1

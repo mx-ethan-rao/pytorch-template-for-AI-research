@@ -54,27 +54,26 @@ Just copy & paste `Net_arch.forward` method to  `net_arch_test.py` and add `asse
 
 - Config is written in yaml file
     - You can choose configs at `config/default.yaml`. Custom configs are under `config/job/`
-- `name` is train name you run.
-- `working_dir` is root directory for saving checkpoints, logging logs.
-- `device` is device mode for running your model. You can choose `cpu` or `cuda`
-- `data` field
-    - Configs for Dataloader.
-    - glob `train_dir` / `test_dir` with `file_format` for Dataloader.
-    - If `divide_dataset_per_gpu` is true, origin dataset is divide into sub dataset for each gpu. 
-    This could mean the size of origin dataset should be multiple of number of using gpu.
-    If this option is false, dataset is not divided but epoch goes up in multiple of number of gpus.
-- `train`/`test` field
-    - Configs for training options.
+- `general` field
+    - `name` is train name you run.
+    - `working_dir` is root directory for saving checkpoints, logging logs.
+    - `device` is device mode for running your model. You can choose `cpu` or `cuda`
     - `random_seed` is for setting python, numpy, pytorch random seed.
-    - `num_epoch` is for end iteration step of training.
-    - `optimizer` is for selecting optimizer. Only `adam optimizer` is supported for now.
     - `dist` is for configuring Distributed Data Parallel.
         - `gpus` is the number that you want to use with DDP (`gpus` value is used at `world_size` in DDP).
         Not using DDP when `gpus` is 0, using all gpus when `gpus` is -1.
         - `timeout` is seconds for timeout of process interaction in DDP.
         When this is set as `~`, default timeout (1800 seconds) is applied in `gloo` mode and timeout is turned off in `nccl` mode.
+- `data` field
+    - Configs for Dataloader.
+    - change `_target_` for the dataloader(or data generator) you want to use
+    - glob `train_dir` / `test_dir` with `file_format` for Dataloader.
+    - If `divide_dataset_per_gpu` is true, origin dataset is divide into sub dataset for each gpu. 
+    This could mean the size of origin dataset should be multiple of number of using gpu.
+    If this option is false, dataset is not divided but epoch goes up in multiple of number of gpus.
 - `model` field
     - Configs for Network architecture and options for model.
+    - change `_target_` for the the model network you want to use
     - You can add configs in yaml format to config your network.
 - `log` field
     - Configs for logging include tensorboard / wandb logging. 
@@ -93,6 +92,8 @@ Just copy & paste `Net_arch.forward` method to  `net_arch_test.py` and add `asse
 1. `pip install -r requirements-dev.txt` for install develop dependencies (this requires python 3.6 and above because of black)
 
 1. `pre-commit install` for adding pre-commit to git hook
+
+1. `conda env create -f environment.yml` for creating a conda venv from evironment.yml but some of the dependencies may conflict with your environment like cuda
 
 ## Train
 

@@ -2,7 +2,7 @@
 
 model:
   _target_: model.network.Network
-  cfg: ~
+  cfg: ~ # set to None for now, instantiate when during running
 
 train:
   num_workers: 4

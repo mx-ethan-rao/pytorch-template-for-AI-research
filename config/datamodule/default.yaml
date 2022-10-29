@@ -2,10 +2,10 @@
 
 gen_dataset:
   _target_: dataloader.dataloader.Dataset_
-  cfg: ~
+  cfg: ~ # set to None for now, instantiate when during running
   mode:
     _target_: dataloader.dataloader.DataloaderMode
-    value: 1
+    value: 1 # 1 for Train status, 2 for Test status for now, it will be updated during running so usually not to care this field
 
 data:
   train_dir: 'dataset/meta/train'

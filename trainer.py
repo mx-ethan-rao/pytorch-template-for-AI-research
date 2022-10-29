@@ -117,7 +117,7 @@ def train_loop(rank, cfg):
             epoch_step = 1
         else:
             epoch_step = cfg.dist.gpus
-        for epoch in tqdm(range(model.epoch + 1, cfg.train.num_epoch, epoch_step), desc="Epoch"):
+        for epoch in tqdm(range(model.epoch + 1, cfg.train.num_epoch, epoch_step), desc="Epoch", unit='epoch'):
             model.epoch = epoch
             model.train_model(train_loader)
             if model.epoch % cfg.log.chkpt_interval == 0:
