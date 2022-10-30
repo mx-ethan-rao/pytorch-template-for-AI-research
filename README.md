@@ -97,7 +97,12 @@ Just copy & paste `Net_arch.forward` method to  `net_arch_test.py` and add `asse
 
 ## Train
 
-- `python trainer.py working_dir=$(pwd)`
+- `python trainer.py device=cuda`
+- `python trainer.py log.use_wandb=true device=cpu`
+
+## TO DO
+1. Implement progress bar in Multi-GPU trainning
+2. Multi-GPU trainning with hydra.utils.instantiate()
 
 ## Inspired by
 
