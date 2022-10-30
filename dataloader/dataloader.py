@@ -8,6 +8,8 @@ import torchvision
 from prefetch_generator import BackgroundGenerator
 from torch.utils.data import DataLoader, Dataset
 from torch.utils.data.distributed import DistributedSampler
+from omegaconf.dictconfig import DictConfig
+
 
 
 class DataloaderMode(Enum):
@@ -64,7 +66,11 @@ def create_dataloader(cfg, mode, rank):
 
 
 class Dataset_(Dataset):
-    def __init__(self, cfg, mode):
+    def __init__(
+        self, 
+        cfg: DictConfig = None,
+        mode: DataloaderMode = DataloaderMode.train,
+        ):
         self.cfg = cfg
         self.mode = mode
         if mode is DataloaderMode.train:

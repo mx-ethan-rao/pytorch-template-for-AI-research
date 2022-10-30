@@ -6,7 +6,7 @@ from omegaconf.dictconfig import DictConfig
 
 class Network(nn.Module):
     # Network architecture
-    def __init__(self, cfg: DictConfig) -> None:
+    def __init__(self, cfg: DictConfig = None) -> None:
         super(Network, self).__init__()
         self.cfg = cfg
 

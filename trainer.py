@@ -18,7 +18,7 @@ from omegaconf import OmegaConf, open_dict
 from dataloader.dataloader import DataloaderMode, create_dataloader
 from model.model_handler import Model_handler
 # from model.network import Network
-from utils.utils import get_logger, is_logging_process, set_random_seed
+from utils.utils import get_logger, is_logging_process, set_random_seed, print_config
 from utils.writer import Writer
 
 
@@ -64,8 +64,7 @@ def train_loop(rank, cfg):
         os.makedirs(cfg.log.chkpt_dir, exist_ok=True)
         # set writer (tensorboard / wandb)
         writer = Writer(cfg, "tensorboard")
-        cfg_str = OmegaConf.to_yaml(cfg)
-        logger.info("Config:\n" + cfg_str)
+        print_config(cfg, get_logger(cfg, os.path.basename(__file__), disable_console=True))
         if cfg.data.train_dir == "" or cfg.data.test_dir == "":
             logger.error("train or test data directory cannot be empty.")
             raise Exception("Please specify directories of data")
