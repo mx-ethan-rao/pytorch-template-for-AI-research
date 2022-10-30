@@ -156,6 +156,8 @@ def main(hydra_cfg):
         hydra_cfg.dist.gpus = 0
         train_loop(0, hydra_cfg)
     else:
+        # because ${hydra:runtime.cwd} is not support for DDP
+        hydra_cfg.work_dir= hydra_cfg.work_dir
         distributed_run(train_loop, hydra_cfg)
 
 
