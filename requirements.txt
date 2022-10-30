@@ -11,3 +11,4 @@ hydra-core
 hydra_colorlog 
 omegaconf
 tqdm
+rich

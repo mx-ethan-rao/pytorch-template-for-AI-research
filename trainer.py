@@ -64,7 +64,6 @@ def train_loop(rank, cfg):
         os.makedirs(cfg.log.chkpt_dir, exist_ok=True)
         # set writer (tensorboard / wandb)
         writer = Writer(cfg, "tensorboard")
-        print_config(cfg, get_logger(cfg, os.path.basename(__file__), disable_console=True))
         if cfg.data.train_dir == "" or cfg.data.test_dir == "":
             logger.error("train or test data directory cannot be empty.")
             raise Exception("Please specify directories of data")
@@ -145,6 +144,7 @@ def main(hydra_cfg):
     hydra_cfg.device = hydra_cfg.device.lower()
     with open_dict(hydra_cfg):
         hydra_cfg.job_logging_cfg = HydraConfig.get().job_logging
+    print_config(hydra_cfg, get_logger(hydra_cfg, os.path.basename(__file__), disable_console=True))
     # random seed
     if hydra_cfg.random_seed is None:
         hydra_cfg.random_seed = random.randint(1, 10000)

@@ -36,6 +36,25 @@ Just copy & paste `Net_arch.forward` method to  `net_arch_test.py` and add `asse
     - `writer.py` is for writing logs in tensorboard / wandb.
 - `trainer.py` file: this is for setting up and iterating epoch.
 
+<br>
+
+## Config Structure
+
+```
+── configs                   <- Hydra configuration files
+    ├── default.yaml               <- enter point of hydra
+    ├── datamodule               <- Datamodule configs folder (add your data config under it)
+    |   └── default.yaml          <- Datamodule default yaml 
+    ├── hydra/job_logging        <- Hydra configs
+    |   └── custom.yaml          <- customize hydra config here 
+    ├── model                    <- Model configs (add your model config under it)
+    |   └── default.yaml          <- Model default yaml 
+    └── general                 <- general config for training
+        └── default.yaml          <- General default yaml (e.g. logger)
+```
+
+<br>
+
 ## Hightlight
 - Support for multiple dataloaders and multiple models in one project
 - Simply write another model.network.Network class and dataloader.dataloader.Dataset_
