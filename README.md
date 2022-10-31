@@ -114,10 +114,11 @@ Just copy & paste `Net_arch.forward` method to  `net_arch_test.py` and add `asse
 
 1. `conda env create -f environment.yml` for creating a conda venv from evironment.yml but some of the dependencies may conflict with your environment like cuda
 
-## Train
+## Sample Train
 
 - `python trainer.py device=cuda`
 - `python trainer.py log.use_wandb=true device=cpu`
+- `python trainer.py device=cuda dist.gpus=-1 train.num_epoch=100`
 
 ## TO DO
 1. Implement progress bar in Multi-GPU trainning
